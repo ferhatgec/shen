@@ -1,18 +1,20 @@
+import sys
+
 from shen import *
 
 data = ''
 
 with open('shen.py', 'r') as file:
-    for line in file:
-        data += line
+  for line in file:
+    data += line
 
-    file.close()
+  file.close()
 
 data += '\n'
 
 init = shen()
 rule = shen_syntax_rule()
-rule.capture_through["'"] = shen_syntax_rule.shen_color(10, 20, 10, "'(.*?)'", True, True).return_inside()
+rule.capture_through["'"] = shen_syntax_rule.shen_color(100, 20, 10, "'(.*?)'", True, True).return_inside()
 rule.capture_through["#"] = shen_syntax_rule.shen_color(10, 10, 30, '#(.*)\n', '\n', True, True).return_inside()
 
 rule.capture_through["{"] = shen_syntax_rule.shen_color(108, 10, 200, '{(.*)}', '}', True, True).return_inside()
@@ -66,5 +68,10 @@ rule.supported_tokens[">"] = shen_syntax_rule.shen_color(100, 10, 100, '', False
 rule.supported_tokens["<"] = shen_syntax_rule.shen_color(100, 10, 100, '', False).return_inside()
 rule.supported_tokens["="] = shen_syntax_rule.shen_color(100, 10, 100, '', False).return_inside()
 
-for x in (init.highlight(data, rule)):
-    print(x, end='')
+if len(sys.argv) > 1 and sys.argv[1] == '--html':
+  get_as_html = True
+else:
+  get_as_html = False
+
+for x in (init.highlight(data, rule, get_as_html)):
+  print(x, end='')
